@@ -1,5 +1,6 @@
 package com.mclean.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,8 @@ import java.util.List;
  * @Description:
  * @date: 2019/3/1 9:33
  */
-public class UserBean {
+public class UserBean implements Serializable {
+    public static final long serialVersionUID = 1L;
 
     Integer id;
     String name;

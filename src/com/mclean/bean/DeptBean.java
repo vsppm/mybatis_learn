@@ -1,12 +1,16 @@
 package com.mclean.bean;
 
+import java.io.Serializable;
+
 /**
  * @Title:
  * @author: IMUKL
  * @Description:
  * @date: 2019/3/6 9:28
  */
-public class DeptBean {
+public class DeptBean implements Serializable {
+    public static final long serialVersionUID = 1L;
+
     Integer id;
     String deptName;
 

@@ -1,12 +1,16 @@
 package com.mclean.bean;
 
+import java.io.Serializable;
+
 /**
  * @Title:
  * @author: IMUKL
  * @Description:
  * @date: 2019/3/6 15:15
  */
-public class AddressBean {
+public class AddressBean implements Serializable{
+    public static final long serialVersionUID = 1L;
+
     Integer id;
     String city;
     Integer userId;
