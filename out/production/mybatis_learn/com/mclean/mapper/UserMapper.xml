@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mclean.dao.IUserMapper">
+    <!--resultType与resultMap不能同时使用,resultMap用于自定义返回值的规则-->
+    <resultMap id="myUserBean" type="com.mclean.bean.UserBean">
+        <!--id定义主键的列规则,mybatis会进行优化-->
+        <id column="id" property="id"></id>
+        <!--result定义其他普通的列规则-->
+        <result column="nick_name" property="nickName"></result>
+        <!--其他列如果不指定列规则,则会自动封装,列名称与属性名称一致-->
+    </resultMap>
+
+    <select id="selectUserBy" resultMap="myUserBean" databaseId="mysql">
+        select * from user where id = #{id} and name = #{name}
+    </select>
+
+    <select id="selectUser" resultType="com.mclean.bean.UserBean" databaseId="mysql">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
+        insert into user (name,email,nick_name)
+        values (#{name},#{email},#{nickName})
+    </insert>
+
+    <update id="updateUser" databaseId="mysql">
+        update user set
+        name = #{name},
+        nick_name = #{nickName},
+        email = #{email}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUser" databaseId="mysql">
+        delete from user where id = #{id}
+    </delete>
+
+    <!--采用普通级联的书写方式-->
+    <resultMap id="myUserFull" type="com.mclean.bean.UserBean">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="email" property="email"></result>
+        <result column="nick_name" property="nickName"></result>
+        <result column="dept_id" property="dept.id"></result>
+        <result column="dept_name" property="dept.deptName"></result>
+    </resultMap>
+    <!--2.采用association级联的书写方式-->
+    <resultMap id="myUserFull2" type="com.mclean.bean.UserBean">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="email" property="email"></result>
+        <result column="nick_name" property="nickName"></result>
+        <!--测试过程中发现association不写javaType也可以正常获取-->
+        <association property="dept" javaType="com.mclean.bean.DeptBean">
+            <id column="dept_id" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+    </resultMap>
+
+    <select id="selectUserAndDept" resultMap="myUserFull2">
+        select u.id id,u.name name,u.email email, u.nick_name nick_name, d.id dept_id, d.dept_name dept_name  from user u,dept d where u.dept_id=d.id and u.id=#{id}
+    </select>
+
+    <!--3.采用association级联的书写方式(分步查询)-->
+    <resultMap id="myUserFull3" type="com.mclean.bean.UserBean">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="email" property="email"></result>
+        <result column="nick_name" property="nickName"></result>
+        <!--首先查出user表的信息,然后利用user表中的dept_id字段查询部门表的信息
+        select: 指定下一步需要查询的sql, column指定需要进行的sql查询的参数
+        -->
+        <association property="dept" select="com.mclean.dao.IDeptMapper.selectDept" column="dept_id">
+            <id column="id" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+    </resultMap>
+
+    <select id="selectUserStep" resultMap="myUserFull3">
+        select *  from user where id=#{id}
+    </select>
+
+    <!--采用collection集合以及association级联的书写方式(分步查询)-->
+    <resultMap id="myUserFull4" type="com.mclean.bean.UserBean">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="email" property="email"></result>
+        <result column="nick_name" property="nickName"></result>
+        <!--首先查出user表的信息,然后利用user表中的dept_id字段查询部门表的信息
+        select: 指定下一步需要查询的sql, column指定需要进行的sql查询的参数
+        -->
+        <association property="dept" select="com.mclean.dao.IDeptMapper.selectDept" column="dept_id">
+            <id column="id" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+        <!--账户对应的地址集合-->
+        <collection property="addresses" select="com.mclean.dao.IAddressMapper.getAddressByUserId" column="id"></collection>
+    </resultMap>
+
+    <select id="selectUserFullInfoBySqlStep" resultMap="myUserFull4">
+        select *  from user where id=#{id}
+    </select>
+
+</mapper>
