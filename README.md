@@ -184,4 +184,4 @@ environments设置的当前environment数据库访问驱动的别名,由此可�
 > mybatis默认两级缓存
 
 - 第一级缓存(sqlSession级别)是默认开启的
-- 第二级缓存是namespace级别的缓存,需要手动开启和配置,可以通过Cache接口自定义二级缓存
+- 第二级缓存是namespace级别的缓存,需要手动开启和配置,可以通过Cache接口自定义二级缓存,是全局缓存
