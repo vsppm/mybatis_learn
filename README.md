@@ -193,11 +193,15 @@ environments设置的当前environment数据库访问驱动的别名,由此可�
 3.不同的namespace查询出的数据会放在对应的缓存中
 
 
-> 可用的收回策略有:
+> 二级缓存可用的收回策略有(默认的是 LRU):
 
 - LRU – 最近最少使用的:移除最长时间不被使用的对象。
 - FIFO – 先进先出:按对象进入缓存的顺序来移除它们。
 - SOFT – 软引用:移除基于垃圾回收器状态和软引用规则的对象。
 - WEAK – 弱引用:更积极地移除基于垃圾收集器状态和弱引用规则的对象。
 
-> 默认的是 LRU。
+> _**如何开启二级缓存**_
+
+- 在mybatis-config.xml中配置<setting name="cacheEnabled" value="true"/>
+- 在mapper xml中写上<cache></cache>标签
+- POJO类需要实现"序列化"接口,因为二级缓存在**cache readonly=false**的时候,会用到**序列化以及反序列化**技术
